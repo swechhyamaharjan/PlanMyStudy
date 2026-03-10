@@ -2,6 +2,7 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
+//Get all users
 export async function GET(req: NextRequest){
   const users = await prisma.user.findMany({
     include: {subjects: true, studyTasks: true}
@@ -9,6 +10,7 @@ export async function GET(req: NextRequest){
   return NextResponse.json(users);
 }
 
+//Register a new user
 export async function POST(req: NextRequest){
   const body = await req.json();
 
@@ -27,5 +29,7 @@ export async function POST(req: NextRequest){
   })
   return NextResponse.json({message: "User created", user}, {status: 201})
 }
+
+
 
 

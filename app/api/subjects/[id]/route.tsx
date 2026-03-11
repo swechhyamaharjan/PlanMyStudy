@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 
 interface Props{
-  params: Promise<{id: String}>
+  params: { id: string }
 }
 
 export async function GET(req: NextRequest, {params}: Props){

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 
+//Get all subjects
 export async function GET(req: NextRequest){
   const subjects = await prisma.subject.findMany({
     include: {
@@ -13,6 +14,7 @@ export async function GET(req: NextRequest){
   return NextResponse.json(subjects);
 }
 
+//Create a subject 
 export async function POST(req: NextRequest){
   const body = await req.json();
   const {name, difficulty, userId} = body;

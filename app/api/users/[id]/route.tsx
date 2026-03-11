@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Props{
-  params: Promise<{id: String}>
+  params: { id: string }
 }
 
 //Get user by id

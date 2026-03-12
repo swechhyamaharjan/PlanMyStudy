@@ -1,4 +1,5 @@
 import prisma from "@/prisma/client";
+import { createToken } from "@/utils/generateToken";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,9 +19,10 @@ export async function POST(req: NextRequest) {
   }
 
   const isMatched = await bcrypt.compare(password, user.password);
+
   if (!isMatched) {
     return NextResponse.json({ message: "Password doesn't match!! Please try again!!" }, { status: 400 })
   }
-  return NextResponse.json({message: "Login sucess!!", user: {id: user.id, email: user.email}})
+  return createToken({ userId: user.id, email: user.email })
 }
 

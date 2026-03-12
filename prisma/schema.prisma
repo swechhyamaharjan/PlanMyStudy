@@ -30,6 +30,7 @@ model Subject {
   userId     Int
   user       User   @relation(fields: [userId], references: [id])
   exams      Exam[]
+  studyTasks StudyTask[]
 }
 
 model Exam {
@@ -46,4 +47,6 @@ model StudyTask {
   completed Boolean  @default(false)
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+  subjectId Int
+  subject  Subject    @relation(fields: [subjectId], references: [id])
 }

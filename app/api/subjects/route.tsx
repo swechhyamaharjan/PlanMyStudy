@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
+import { checkAuth } from "@/utils/checkAuth";
 
 //Get all subjects
-export async function GET(req: NextRequest){
+export async function GET(req: NextRequest) {
   const subjects = await prisma.subject.findMany({
     include: {
-      user: {select: 
-        {id: true, name: true, email: true}
+      user: {
+        select:
+          { id: true, name: true, email: true }
       },
       exams: true
     }
@@ -15,20 +17,24 @@ export async function GET(req: NextRequest){
 }
 
 //Create a subject 
-export async function POST(req: NextRequest){
+export async function POST(req: NextRequest) {
   const body = await req.json();
-  const {name, difficulty, userId} = body;
+  let user;
 
-  if (!name || !difficulty || !userId ){
-    return NextResponse.json({message: "Missing fields!!"}, {status: 400})
+  try {
+    ({ user } = await checkAuth(req));
+  } catch (err: any) {
+    // If token is missing or invalid
+    return NextResponse.json(
+      { message: "Please login first!!" },
+      { status: 401 }
+    );
   }
 
-  const checkUser = await prisma.user.findUnique({
-    where: {id: userId}
-  })
+  const { name, difficulty } = body;
 
-  if(!checkUser){
-    return NextResponse.json({message: "User not found"}, {status: 404})
+  if (!name || !difficulty) {
+    return NextResponse.json({ message: "Missing fields!!" }, { status: 400 })
   }
 
   const subject = await prisma.subject.create({
@@ -36,9 +42,9 @@ export async function POST(req: NextRequest){
       name,
       difficulty,
       user: {
-        connect: {id: userId}
+        connect: { id: user.id }
       }
     }
   })
-  return NextResponse.json({message: "Subject added successfully", subject}, {status: 201});
+  return NextResponse.json({ message: "Subject added successfully", subject }, { status: 201 });
 }

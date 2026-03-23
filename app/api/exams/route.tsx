@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
+import { checkAuth } from "@/utils/checkAuth";
 
-export async function GET(req: NextRequest){
+export async function GET(req: NextRequest) {
   const exams = await prisma.exam.findMany({
     include: {
       subject: true
@@ -10,15 +11,21 @@ export async function GET(req: NextRequest){
   return NextResponse.json(exams);
 }
 
-export async function POST(req: NextRequest){
+export async function POST(req: NextRequest) {
+  try {
+    await checkAuth(req);
+  } catch {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json();
-  const {examDate, subjectId} = body;
+  const { examDate, subjectId } = body;
 
   const checkSubject = await prisma.subject.findUnique({
-    where: {id:  subjectId}
+    where: { id: subjectId }
   })
-  if(!checkSubject){
-    return NextResponse.json({message: "Subject not found"}, {status: 404})
+  if (!checkSubject) {
+    return NextResponse.json({ message: "Subject not found" }, { status: 404 })
   }
 
   const exam = await prisma.exam.create({
@@ -27,5 +34,5 @@ export async function POST(req: NextRequest){
       subjectId,
     }
   })
-  return NextResponse.json({message: "Exam inserted sucess!!", exam}, {status: 201})
+  return NextResponse.json({ message: "Exam inserted sucess!!", exam }, { status: 201 })
 }

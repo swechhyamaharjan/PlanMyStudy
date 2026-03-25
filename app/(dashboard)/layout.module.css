@@ -1,0 +1,55 @@
+/* ── Dashboard Layout ───────────────────────────────────── */
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  position: relative;
+}
+
+/* Ambient purple glow — mirrors auth-page radial */
+.root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 500px 400px at 80% 10%, rgba(108, 99, 255, 0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 400px 500px at 10% 85%, rgba(108, 99, 255, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 40px 48px;
+  overflow-y: auto;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Scrollbar */
+.main::-webkit-scrollbar {
+  width: 4px;
+}
+
+.main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main::-webkit-scrollbar-thumb {
+  background: rgba(108, 99, 255, 0.2);
+  border-radius: 2px;
+}
+
+.main::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 99, 255, 0.35);
+}

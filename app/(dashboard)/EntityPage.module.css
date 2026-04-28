@@ -313,3 +313,82 @@
 .subjectList li {
   justify-content: space-between;
 }
+
+/* ── Task list extras ── */
+.taskListWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.taskGroupLabel {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 10px 2px;
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.taskTitle {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskTitleDone {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.taskMeta {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.checkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.checkBtn:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+}
+
+.checkBtnDone {
+  color: var(--primary);
+  opacity: 0.6;
+}
+
+.completedItem {
+  opacity: 0.6;
+}
+
+.completedItem:hover {
+  opacity: 1;
+}

@@ -241,3 +241,75 @@
   opacity: 0.6;
   flex-shrink: 0;
 }
+
+/* ── Exam list extras ── */
+.examInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.examSubject {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.examDate {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.examMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.examBadge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.examBadgeUrgent {
+  background: rgba(232, 69, 106, 0.1);
+  color: #e8456a;
+}
+
+.urgentItem {
+  border-color: rgba(232, 69, 106, 0.3) !important;
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.deleteBtn:hover {
+  background: rgba(232, 69, 106, 0.1);
+  color: #e8456a;
+}
+
+/* Fix subjectList li for exam layout (flex row with space-between) */
+.subjectList li {
+  justify-content: space-between;
+}

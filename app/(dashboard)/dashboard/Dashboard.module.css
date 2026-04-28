@@ -32,19 +32,26 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .metricCard::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(108, 99, 255, 0.08) 0%, transparent 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(108, 99, 255, 0.08) 0%,
+    transparent 100%
+  );
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -52,7 +59,9 @@
 .metricCard:hover {
   transform: translateY(-2px);
   border-color: rgba(108, 99, 255, 0.4);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15), 0 0 20px rgba(108, 99, 255, 0.1);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(108, 99, 255, 0.1);
 }
 
 .metricCard:hover::before {
@@ -156,4 +165,100 @@
 .emptyStateText {
   color: var(--text-muted);
   font-size: 14px;
+}
+
+/* ── Task / Exam list rows ── */
+.taskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.taskItem:hover {
+  border-color: rgba(108, 99, 255, 0.3);
+  transform: translateX(3px);
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.taskTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.checkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.checkBtn:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+}
+
+.examDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.examBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.examBadgeUrgent {
+  background: rgba(232, 69, 106, 0.1);
+  color: #e8456a;
 }

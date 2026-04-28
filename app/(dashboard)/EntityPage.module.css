@@ -1,9 +1,11 @@
 /* ── Shared Entity Page Styles (Subjects, Exams, Tasks) ─────────────────────────────────────── */
+
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-bottom: 32px;
+  gap: 16px;
 }
 
 .title {
@@ -11,12 +13,13 @@
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .subtitle {
   font-size: 15px;
   color: var(--text-muted);
+  line-height: 1.5;
 }
 
 .actionBtn {
@@ -33,6 +36,8 @@
   align-items: center;
   gap: 8px;
   box-shadow: 0 4px 16px rgba(108, 99, 255, 0.25);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .actionBtn:hover {
@@ -45,30 +50,137 @@
   font-size: 18px;
 }
 
+/* ── Content Area: side-by-side layout ── */
 .contentArea {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .contentArea {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Add Form Card ── */
+.addSubjectForm {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  min-height: 400px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
+  gap: 8px;
+  position: sticky;
+  top: 24px;
 }
 
+.addSubjectForm label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.addSubjectForm label:first-of-type {
+  margin-top: 0;
+}
+
+.inputField {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--background, #f8f8fc);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+  font-family: inherit;
+}
+
+.inputField::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.inputField:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  background: var(--surface);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.25);
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.actionButton:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorText {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e8456a;
+  margin: 4px 0 0;
+  padding: 8px 10px;
+  background: rgba(232, 69, 106, 0.07);
+  border-radius: 6px;
+  border-left: 3px solid #e8456a;
+}
+
+/* ── Right panel: empty state or list ── */
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  max-width: 400px;
+  min-height: 400px;
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
 }
 
 .emptyStateIcon {
   font-size: 48px;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   opacity: 0.3;
 }
 
@@ -76,11 +188,56 @@
   font-size: 20px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .emptyStateDesc {
   font-size: 15px;
   color: var(--text-muted);
   line-height: 1.5;
+  max-width: 28ch;
+}
+
+/* ── Subject list ── */
+.subjectList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subjectList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  cursor: default;
+}
+
+.subjectList li:hover {
+  transform: translateX(4px);
+  border-color: rgba(108, 99, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.08);
+}
+
+.subjectList li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.6;
+  flex-shrink: 0;
 }

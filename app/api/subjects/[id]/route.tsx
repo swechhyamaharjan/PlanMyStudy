@@ -16,27 +16,20 @@ export async function GET(req: NextRequest, {params}: Props){
   return NextResponse.json(subject);
 }
 
-export async function PUT(req: NextRequest, {params}: Props){
-  const body = await req.json();
-  const { name, difficulty, userId } = body;
-
+export async function PUT(req: NextRequest, { params }: Props) {
   const id = (await params).id;
-   
-  const checkUser = await prisma.user.findUnique({
-    where: {id: userId}
-  })
-
-  if(!checkUser){
-    return NextResponse.json({message: "User not found!!"}, {status: 404})
+  const { name, difficulty } = await req.json();
+ 
+  if (!name || !difficulty) {
+    return NextResponse.json({ message: "Missing fields" }, { status: 400 });
   }
-  const subject = await prisma.subject.update({
-    where: {id: parseInt(id)},
-    data: {
-      name,
-      difficulty
-    }
-  })
-  return NextResponse.json({message: "Subject updated successfully", subject})
+ 
+  const updated = await prisma.subject.update({
+    where: { id: parseInt(id) },
+    data: { name, difficulty },
+  });
+ 
+  return NextResponse.json({ message: "Subject updated", updated });
 }
 
 export async function DELETE(req: NextRequest, {params}: Props){

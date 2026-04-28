@@ -94,8 +94,8 @@
   width: 100%;
   padding: 10px 12px;
   font-size: 14px;
-  color: var(--text);
-  background: var(--background, #f8f8fc);
+  color: #1a1a2e;
+  background: #f4f4f8;
   border: 1.5px solid var(--border);
   border-radius: 8px;
   outline: none;
@@ -107,14 +107,15 @@
 }
 
 .inputField::placeholder {
-  color: var(--text-muted);
-  opacity: 0.6;
+  color: #7a7a9a;
+  opacity: 1;
 }
 
 .inputField:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
-  background: var(--surface);
+  background: #ffffff;
+  color: #1a1a2e;
 }
 
 .actionButton {
@@ -391,4 +392,176 @@
 
 .completedItem:hover {
   opacity: 1;
+}
+
+/* ── Dashboard task/exam list ── */
+.taskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--background, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.taskItem:hover {
+  border-color: rgba(108, 99, 255, 0.3);
+  transform: translateX(3px);
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.taskTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.checkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.checkBtn:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+}
+
+.examDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.examBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.examBadgeUrgent {
+  background: rgba(232, 69, 106, 0.1);
+  color: #e8456a;
+}
+
+/* ── Subject difficulty badges ── */
+.diffBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.diffEasy {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+.diffMedium {
+  background: rgba(234, 179, 8, 0.12);
+  color: #b45309;
+}
+
+.diffHard {
+  background: rgba(232, 69, 106, 0.12);
+  color: #e8456a;
+}
+
+/* ── Inline edit row ── */
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px !important;
+  flex-wrap: wrap;
+}
+
+.editRow .inputField {
+  flex: 1;
+  min-width: 100px;
+  margin: 0;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+
+.editActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Generic icon button ── */
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.iconBtn:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+}
+
+.iconBtnSuccess:hover {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
 }

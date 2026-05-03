@@ -2,6 +2,7 @@
 
 import { FiBook, FiCalendar, FiCheckSquare, FiPlus, FiSquare, FiTrash2 } from "react-icons/fi";
 import styles from "./Dashboard.module.css";
+import PlanMyStudy from "@/app/components/PlanMyStudy";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -33,10 +34,10 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<StudyTask[]>([]);
 
   useEffect(() => {
-    axios.get("/api/subjects").then((r) => setSubjects(r.data)).catch(() => {});
-    axios.get("/api/exams").then((r) => setExams(r.data)).catch(() => {});
+    axios.get("/api/subjects").then((r) => setSubjects(r.data)).catch(() => { });
+    axios.get("/api/exams").then((r) => setExams(r.data)).catch(() => { });
     // Change to your actual study tasks route if different
-    axios.get("/api/study-tasks").then((r) => setTasks(r.data)).catch(() => {});
+    axios.get("/api/studyTasks").then((r) => setTasks(r.data)).catch(() => { });
   }, []);
 
   // Today's tasks
@@ -80,7 +81,7 @@ export default function DashboardPage() {
       });
       const res = await axios.get("/api/study-tasks");
       setTasks(res.data);
-    } catch {}
+    } catch { }
   };
 
   return (
@@ -88,7 +89,13 @@ export default function DashboardPage() {
       <header className={styles.header}>
         <h1 className={styles.title}>Dashboard</h1>
         <p className={styles.subtitle}>Welcome back! Here's an overview of your study plan.</p>
+
       </header>
+
+      {/* Planner */}
+      <PlanMyStudy onPlanGenerated={() => {
+        axios.get("/api/study-tasks").then(r => setTasks(r.data));
+      }} />
 
       {/* Metrics */}
       <div className={styles.metricsGrid}>

@@ -23,71 +23,77 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // FETCH SUBJECTS
-  const subjects = await prisma.subject.findMany({
-    where: { userId },
-  });
-
-  // FETCH UPCOMING EXAMS
-  const exams = await prisma.exam.findMany({
-    where: {
-      examDate: {
-        gte: new Date(),
-      },
-    },
-    include: {
-      subject: true,
-    },
-    orderBy: {
-      examDate: "asc",
-    },
-  });
-
-  // VALIDATION
-  if (subjects.length === 0) {
-    return NextResponse.json(
-      { message: "Add some subjects first!" },
-      { status: 400 }
-    );
-  }
-
-  if (exams.length === 0) {
-    return NextResponse.json(
-      { message: "Add some upcoming exams first!" },
-      { status: 400 }
-    );
-  }
-
-  // OPTIONAL:
-  // PREVENT REGENERATING IF PLAN ALREADY EXISTS
-  const existingTasks = await prisma.studyTask.findMany({
-    where: {
-      userId,
-      completed: false,
-    },
-  });
-
-  if (existingTasks.length > 0) {
-    return NextResponse.json({
-      message: "Study plan already exists!",
-      count: existingTasks.length,
+  try {
+    // FETCH SUBJECTS
+    const subjects = await prisma.subject.findMany({
+      where: { userId },
     });
-  }
 
-  const today = new Date().toISOString().split("T")[0];
+    // FETCH UPCOMING EXAMS
+    const exams = await prisma.exam.findMany({
+      where: {
+        examDate: {
+          gte: new Date(),
+        },
+      },
+      include: {
+        subject: true,
+      },
+      orderBy: {
+        examDate: "asc",
+      },
+    });
 
-  // BUILD EXAM LIST
-  const examList = exams
-    .map(
-      (e) =>
-        `- Subject: "${e.subject.name}" | Exam date: ${e.examDate.toISOString().split("T")[0]
-        } | Difficulty: ${e.subject.difficulty} | subjectId: ${e.subject.id
-        }`
-    )
-    .join("\n");
+    // VALIDATION
+    if (subjects.length === 0) {
+      return NextResponse.json(
+        { message: "Add some subjects first!" },
+        { status: 400 }
+      );
+    }
 
-  // AI PROMPT
-  const prompt = `
+    if (exams.length === 0) {
+      return NextResponse.json(
+        { message: "Add some upcoming exams first!" },
+        { status: 400 }
+      );
+    }
+
+    // CHECK EXISTING TASKS
+    const existingTasks = await prisma.studyTask.findMany({
+      where: {
+        userId,
+        completed: false,
+        taskDate: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    if (existingTasks.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Study plan already exists!",
+          count: existingTasks.length,
+        },
+        { status: 400 }
+      );
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+
+    // BUILD EXAM LIST
+    const examList = exams
+      .map(
+        (e) =>
+          `- Subject: "${e.subject.name}" | Exam date: ${e.examDate.toISOString().split("T")[0]
+          } | Difficulty: ${e.subject.difficulty} | subjectId: ${e.subject.id
+          }`
+      )
+      .join("\n");
+
+    // AI PROMPT
+    const prompt = `
 You are a smart AI study planner.
 
 Today is ${today}.
@@ -103,9 +109,6 @@ RULES:
 - Create 1-3 tasks per day
 - Allow occasional rest days
 - Keep task titles specific and actionable
-- Example:
-  "Practice past papers - Mathematics"
-  "Review database normalization"
 - Do not create tasks after a subject's exam date
 - Spread tasks evenly
 
@@ -119,7 +122,7 @@ FORMAT:
 [
   {
     "title": "Practice past papers",
-    "taskDate": "2026-04-30",
+    "taskDate": "2026-05-04",
     "subjectId": 1
   }
 ]
@@ -128,7 +131,6 @@ Only use these subjectIds:
 ${subjects.map((s) => `${s.id} (${s.name})`).join(", ")}
 `;
 
-  try {
     // GENERATE PLAN
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -183,9 +185,31 @@ ${subjects.map((s) => `${s.id} (${s.name})`).join(", ")}
       );
     }
 
+    // VALIDATE TASKS
+    const validSubjectIds = subjects.map((s) => s.id);
+
+    const validTasks = tasks.filter((t: any) => {
+      return (
+        typeof t.title === "string" &&
+        t.title.trim().length > 3 &&
+        typeof t.taskDate === "string" &&
+        !isNaN(new Date(t.taskDate).getTime()) &&
+        validSubjectIds.includes(t.subjectId)
+      );
+    });
+
+    if (validTasks.length === 0) {
+      return NextResponse.json(
+        {
+          message: "AI generated invalid tasks",
+        },
+        { status: 500 }
+      );
+    }
+
     // SAVE TASKS
     await prisma.studyTask.createMany({
-      data: tasks.map(
+      data: validTasks.map(
         (t: {
           title: string;
           taskDate: string;
@@ -200,12 +224,14 @@ ${subjects.map((s) => `${s.id} (${s.name})`).join(", ")}
       ),
     });
 
-    return NextResponse.json({
-      message: `Study plan generated successfully!`,
-      count: tasks.length,
-      tasks,
-    });
-
+    return NextResponse.json(
+      {
+        message: "Study plan generated successfully!",
+        count: validTasks.length,
+        tasks: validTasks,
+      },
+      { status: 201 }
+    );
   } catch (err: any) {
     console.error("GROQ ERROR:", err);
 

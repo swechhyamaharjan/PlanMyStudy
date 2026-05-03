@@ -36,7 +36,6 @@ export default function DashboardPage() {
   useEffect(() => {
     axios.get("/api/subjects").then((r) => setSubjects(r.data)).catch(() => { });
     axios.get("/api/exams").then((r) => setExams(r.data)).catch(() => { });
-    // Change to your actual study tasks route if different
     axios.get("/api/studyTasks").then((r) => setTasks(r.data)).catch(() => { });
   }, []);
 

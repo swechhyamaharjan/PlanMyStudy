@@ -1,6 +1,6 @@
 "use client";
 
-import { FiBook, FiCalendar, FiCheckSquare, FiPlus, FiSquare, FiTrash2 } from "react-icons/fi";
+import { FiBook, FiCalendar, FiCheckSquare, FiPlus, FiSquare } from "react-icons/fi";
 import styles from "./Dashboard.module.css";
 import PlanMyStudy from "@/app/components/PlanMyStudy";
 import Link from "next/link";
@@ -29,15 +29,24 @@ interface StudyTask {
 }
 
 export default function DashboardPage() {
+  const [userName, setUserName] = useState("");
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [tasks, setTasks] = useState<StudyTask[]>([]);
 
   useEffect(() => {
+    axios.get("/api/users/profile").then((r) => setUserName(r.data.name ?? "")).catch(() => { });
     axios.get("/api/subjects").then((r) => setSubjects(r.data)).catch(() => { });
     axios.get("/api/exams").then((r) => setExams(r.data)).catch(() => { });
     axios.get("/api/studyTasks").then((r) => setTasks(r.data)).catch(() => { });
   }, []);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
 
   // Today's tasks
   const todayStr = new Date().toDateString();
@@ -72,13 +81,13 @@ export default function DashboardPage() {
 
   const handleToggleTask = async (task: StudyTask) => {
     try {
-      await axios.put(`/api/study-tasks/${task.id}`, {
+      await axios.put(`/api/studyTasks/${task.id}`, {
         completed: !task.completed,
         title: task.title,
         taskDate: task.taskDate,
         subjectId: task.subjectId,
       });
-      const res = await axios.get("/api/study-tasks");
+      const res = await axios.get("/api/studyTasks");
       setTasks(res.data);
     } catch { }
   };
@@ -86,22 +95,24 @@ export default function DashboardPage() {
   return (
     <div>
       <header className={styles.header}>
-        <h1 className={styles.title}>Dashboard</h1>
-        <p className={styles.subtitle}>Welcome back! Here's an overview of your study plan.</p>
-
+        <div>
+          <p className={styles.greeting}>{getGreeting()},</p>
+          <h1 className={styles.title}>
+            {userName ? userName : "Welcome back"}
+          </h1>
+          <p className={styles.subtitle}>Here's an overview of your study plan.</p>
+        </div>
       </header>
 
       {/* Planner */}
       <PlanMyStudy onPlanGenerated={() => {
-        axios.get("/api/study-tasks").then(r => setTasks(r.data));
+        axios.get("/api/studyTasks").then(r => setTasks(r.data));
       }} />
 
       {/* Metrics */}
       <div className={styles.metricsGrid}>
         <div className={styles.metricCard}>
-          <div className={styles.metricIconWrapper}>
-            <FiBook />
-          </div>
+          <div className={styles.metricIconWrapper}><FiBook /></div>
           <div className={styles.metricContent}>
             <span className={styles.metricLabel}>Total Subjects</span>
             <span className={styles.metricValue}>{subjects.length}</span>
@@ -109,9 +120,7 @@ export default function DashboardPage() {
         </div>
 
         <div className={styles.metricCard}>
-          <div className={styles.metricIconWrapper}>
-            <FiCalendar />
-          </div>
+          <div className={styles.metricIconWrapper}><FiCalendar /></div>
           <div className={styles.metricContent}>
             <span className={styles.metricLabel}>Upcoming Exams</span>
             <span className={styles.metricValue}>{upcomingExams.length}</span>
@@ -119,9 +128,7 @@ export default function DashboardPage() {
         </div>
 
         <div className={styles.metricCard}>
-          <div className={styles.metricIconWrapper}>
-            <FiCheckSquare />
-          </div>
+          <div className={styles.metricIconWrapper}><FiCheckSquare /></div>
           <div className={styles.metricContent}>
             <span className={styles.metricLabel}>Pending Tasks</span>
             <span className={styles.metricValue}>{pendingCount}</span>

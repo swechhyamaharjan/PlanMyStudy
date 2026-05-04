@@ -1,8 +1,10 @@
+/* ── Page layout — centered ── */
 .page {
   max-width: 680px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
-/* ── Header ── */
 .header {
   margin-bottom: 32px;
 }
@@ -20,14 +22,12 @@
   color: var(--text-muted);
 }
 
-/* ── Sections ── */
 .sections {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* ── Card ── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -70,7 +70,6 @@
   margin: 0;
 }
 
-/* ── Fields ── */
 .fields {
   display: flex;
   flex-direction: column;
@@ -120,7 +119,6 @@
   color: #1a1a2e;
 }
 
-/* ── Password field with eye toggle ── */
 .passwordWrap {
   position: relative;
 }
@@ -149,7 +147,6 @@
   color: var(--primary);
 }
 
-/* ── Save button ── */
 .saveBtn {
   display: inline-flex;
   align-items: center;
@@ -178,7 +175,6 @@
   cursor: not-allowed;
 }
 
-/* ── Feedback messages ── */
 .msg {
   font-size: 13px;
   font-weight: 500;
@@ -199,7 +195,6 @@
   border-left: 3px solid #e8456a;
 }
 
-/* ── Theme toggle ── */
 .themeToggle {
   display: flex;
   gap: 12px;
@@ -209,7 +204,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 10px 24px;
   font-size: 14px;
   font-weight: 500;
   color: var(--text-muted);
@@ -229,15 +224,13 @@
 .themeActive {
   background: rgba(108, 99, 255, 0.1);
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary) !important;
   font-weight: 600;
 }
 
-/* ── Notification toggles ── */
 .toggleList {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .toggleRow {

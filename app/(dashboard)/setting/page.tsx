@@ -1,34 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiUser, FiLock, FiMoon, FiBell, FiSave, FiEye, FiEyeOff, FiSun } from "react-icons/fi";
 import axios from "axios";
 import styles from "./setting.module.css";
 
 export default function SettingsPage() {
-  // Profile
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [profileMsg, setProfileMsg] = useState({ text: "", error: false });
   const [profileLoading, setProfileLoading] = useState(false);
 
-  // Password
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState({ text: "", error: false });
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // Theme
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
-  // Notifications
   const [notifs, setNotifs] = useState({
     examReminders: true,
     taskReminders: true,
   });
+
+  useEffect(() => {
+    // Prefill name and email
+    axios.get("/api/users/profile")
+      .then((res) => {
+        setName(res.data.name ?? "");
+        setEmail(res.data.email ?? "");
+      })
+      .catch(() => { });
+
+    // Read saved theme from localStorage
+    const saved = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.setAttribute("data-theme", saved);
+    }
+  }, []);
 
   const handleProfileSave = async () => {
     if (!name && !email) {
@@ -84,6 +96,7 @@ export default function SettingsPage() {
   const handleThemeToggle = (selected: "light" | "dark") => {
     setTheme(selected);
     document.documentElement.setAttribute("data-theme", selected);
+    localStorage.setItem("theme", selected);
   };
 
   return (
@@ -95,195 +108,111 @@ export default function SettingsPage() {
 
       <div className={styles.sections}>
 
-        {/* ── Profile ── */}
         <section className={styles.card}>
           <div className={styles.cardHeader}>
-            <div className={styles.cardIconWrap}>
-              <FiUser size={18} />
-            </div>
+            <div className={styles.cardIconWrap}><FiUser size={18} /></div>
             <div>
               <h2 className={styles.cardTitle}>Profile</h2>
               <p className={styles.cardDesc}>Update your name and email address.</p>
             </div>
           </div>
-
           <div className={styles.fields}>
             <div className={styles.field}>
               <label className={styles.label}>Full Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your full name"
-                className={styles.input}
-              />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className={styles.input} />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className={styles.input}
-              />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className={styles.input} />
             </div>
           </div>
-
           {profileMsg.text && (
-            <p className={`${styles.msg} ${profileMsg.error ? styles.msgError : styles.msgSuccess}`}>
-              {profileMsg.text}
-            </p>
+            <p className={`${styles.msg} ${profileMsg.error ? styles.msgError : styles.msgSuccess}`}>{profileMsg.text}</p>
           )}
-
-          <button
-            className={styles.saveBtn}
-            onClick={handleProfileSave}
-            disabled={profileLoading}
-          >
+          <button className={styles.saveBtn} onClick={handleProfileSave} disabled={profileLoading}>
             <FiSave size={14} />
             {profileLoading ? "Saving..." : "Save Profile"}
           </button>
         </section>
 
-        {/* ── Change Password ── */}
         <section className={styles.card}>
           <div className={styles.cardHeader}>
-            <div className={styles.cardIconWrap}>
-              <FiLock size={18} />
-            </div>
+            <div className={styles.cardIconWrap}><FiLock size={18} /></div>
             <div>
               <h2 className={styles.cardTitle}>Change Password</h2>
               <p className={styles.cardDesc}>Keep your account secure with a strong password.</p>
             </div>
           </div>
-
           <div className={styles.fields}>
             <div className={styles.field}>
               <label className={styles.label}>Current Password</label>
-              <div className={styles.passwordWrap}>
-                <input
-                  type={showCurrent ? "text" : "password"}
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Enter current password"
-                  className={styles.input}
-                />
-                <button className={styles.eyeBtn} onClick={() => setShowCurrent(!showCurrent)}>
-                  {showCurrent ? <FiEyeOff size={15} /> : <FiEye size={15} />}
-                </button>
-              </div>
+              <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Enter current password" className={styles.input} />
             </div>
-
             <div className={styles.field}>
               <label className={styles.label}>New Password</label>
               <div className={styles.passwordWrap}>
-                <input
-                  type={showNew ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  className={styles.input}
-                />
+                <input type={showNew ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Enter new password" className={styles.input} />
                 <button className={styles.eyeBtn} onClick={() => setShowNew(!showNew)}>
                   {showNew ? <FiEyeOff size={15} /> : <FiEye size={15} />}
                 </button>
               </div>
             </div>
-
             <div className={styles.field}>
               <label className={styles.label}>Confirm New Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat new password"
-                className={styles.input}
-              />
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className={styles.input} />
             </div>
           </div>
-
           {passwordMsg.text && (
-            <p className={`${styles.msg} ${passwordMsg.error ? styles.msgError : styles.msgSuccess}`}>
-              {passwordMsg.text}
-            </p>
+            <p className={`${styles.msg} ${passwordMsg.error ? styles.msgError : styles.msgSuccess}`}>{passwordMsg.text}</p>
           )}
-
-          <button
-            className={styles.saveBtn}
-            onClick={handlePasswordSave}
-            disabled={passwordLoading}
-          >
+          <button className={styles.saveBtn} onClick={handlePasswordSave} disabled={passwordLoading}>
             <FiLock size={14} />
             {passwordLoading ? "Saving..." : "Change Password"}
           </button>
         </section>
 
-        {/* ── Theme ── */}
         <section className={styles.card}>
           <div className={styles.cardHeader}>
-            <div className={styles.cardIconWrap}>
-              <FiMoon size={18} />
-            </div>
+            <div className={styles.cardIconWrap}><FiMoon size={18} /></div>
             <div>
               <h2 className={styles.cardTitle}>Appearance</h2>
               <p className={styles.cardDesc}>Choose between light and dark mode.</p>
             </div>
           </div>
-
           <div className={styles.themeToggle}>
-            <button
-              className={`${styles.themeOption} ${theme === "light" ? styles.themeActive : ""}`}
-              onClick={() => handleThemeToggle("light")}
-            >
-              <FiSun size={18} />
-              <span>Light</span>
+            <button className={`${styles.themeOption} ${theme === "light" ? styles.themeActive : ""}`} onClick={() => handleThemeToggle("light")}>
+              <FiSun size={18} /><span>Light</span>
             </button>
-            <button
-              className={`${styles.themeOption} ${theme === "dark" ? styles.themeActive : ""}`}
-              onClick={() => handleThemeToggle("dark")}
-            >
-              <FiMoon size={18} />
-              <span>Dark</span>
+            <button className={`${styles.themeOption} ${theme === "dark" ? styles.themeActive : ""}`} onClick={() => handleThemeToggle("dark")}>
+              <FiMoon size={18} /><span>Dark</span>
             </button>
           </div>
         </section>
 
-        {/* ── Notifications ── */}
         <section className={styles.card}>
           <div className={styles.cardHeader}>
-            <div className={styles.cardIconWrap}>
-              <FiBell size={18} />
-            </div>
+            <div className={styles.cardIconWrap}><FiBell size={18} /></div>
             <div>
               <h2 className={styles.cardTitle}>Notifications</h2>
               <p className={styles.cardDesc}>Control what reminders you receive.</p>
             </div>
           </div>
-
           <div className={styles.toggleList}>
             <div className={styles.toggleRow}>
               <div>
                 <p className={styles.toggleLabel}>Exam Reminders</p>
                 <p className={styles.toggleDesc}>Get notified before upcoming exams</p>
               </div>
-              <button
-                className={`${styles.toggle} ${notifs.examReminders ? styles.toggleOn : ""}`}
-                onClick={() => setNotifs({ ...notifs, examReminders: !notifs.examReminders })}
-              >
+              <button className={`${styles.toggle} ${notifs.examReminders ? styles.toggleOn : ""}`} onClick={() => setNotifs({ ...notifs, examReminders: !notifs.examReminders })}>
                 <span className={styles.toggleThumb} />
               </button>
             </div>
-
             <div className={styles.toggleRow}>
               <div>
                 <p className={styles.toggleLabel}>Task Reminders</p>
                 <p className={styles.toggleDesc}>Daily reminders for pending tasks</p>
               </div>
-              <button
-                className={`${styles.toggle} ${notifs.taskReminders ? styles.toggleOn : ""}`}
-                onClick={() => setNotifs({ ...notifs, taskReminders: !notifs.taskReminders })}
-              >
+              <button className={`${styles.toggle} ${notifs.taskReminders ? styles.toggleOn : ""}`} onClick={() => setNotifs({ ...notifs, taskReminders: !notifs.taskReminders })}>
                 <span className={styles.toggleThumb} />
               </button>
             </div>

@@ -262,3 +262,13 @@
   background: rgba(232, 69, 106, 0.1);
   color: #e8456a;
 }
+
+/* ── Greeting ── */
+.greeting {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}

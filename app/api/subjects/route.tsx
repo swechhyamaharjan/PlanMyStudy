@@ -4,11 +4,18 @@ import { checkAuth } from "@/utils/checkAuth";
 
 //Get all subjects
 export async function GET(req: NextRequest) {
+  let user;
+  try {
+    ({ user } = await checkAuth(req));
+  } catch (err) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const subjects = await prisma.subject.findMany({
+    where: { userId: user.id },
     include: {
       user: {
-        select:
-          { id: true, name: true, email: true }
+        select: { id: true, name: true, email: true }
       },
       exams: true
     }

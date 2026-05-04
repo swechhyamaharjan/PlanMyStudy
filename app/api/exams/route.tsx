@@ -3,7 +3,19 @@ import prisma from "@/prisma/client";
 import { checkAuth } from "@/utils/checkAuth";
 
 export async function GET(req: NextRequest) {
+  let user;
+  try {
+    ({ user } = await checkAuth(req));
+  } catch (err) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const exams = await prisma.exam.findMany({
+    where: {
+      subject: {
+        userId: user.id
+      }
+    },
     include: {
       subject: true
     }
@@ -12,8 +24,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  let user;
   try {
-    await checkAuth(req);
+    ({ user } = await checkAuth(req));
   } catch {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
@@ -22,10 +35,10 @@ export async function POST(req: NextRequest) {
   const { examDate, subjectId } = body;
 
   const checkSubject = await prisma.subject.findUnique({
-    where: { id: subjectId }
+    where: { id: subjectId, userId: user.id }
   })
   if (!checkSubject) {
-    return NextResponse.json({ message: "Subject not found" }, { status: 404 })
+    return NextResponse.json({ message: "Subject not found or unauthorized" }, { status: 404 })
   }
 
   const exam = await prisma.exam.create({

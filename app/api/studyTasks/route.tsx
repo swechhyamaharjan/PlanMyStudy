@@ -4,7 +4,15 @@ import { checkAuth } from "@/utils/checkAuth";
 
 //Get all studyTasks
 export async function GET(req: NextRequest) {
+  let user;
+  try {
+    ({ user } = await checkAuth(req));
+  } catch (err) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const studyTasks = await prisma.studyTask.findMany({
+    where: { userId: user.id },
     include: {
       user: true,
       subject: true
@@ -31,10 +39,10 @@ export async function POST(req: NextRequest) {
   }
 
   const checkSubject = await prisma.subject.findUnique({
-    where: { id: subjectId }
+    where: { id: subjectId, userId }
   })
   if (!checkSubject) {
-    return NextResponse.json({ message: "Subject not found" }, { status: 404 })
+    return NextResponse.json({ message: "Subject not found or unauthorized" }, { status: 404 })
   }
 
   const studyTask = await prisma.studyTask.create({

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   FiHome,
   FiBook,
@@ -10,17 +10,28 @@ import {
   FiSettings,
   FiLogOut,
 } from "react-icons/fi";
+import axios from "axios";
 import styles from "./Sidebar.module.css";
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: FiHome,         label: "01" },
-  { name: "Subjects",  href: "/subjects",  icon: FiBook,         label: "02" },
-  { name: "Exams",     href: "/exams",     icon: FiCalendar,     label: "03" },
-  { name: "Tasks",     href: "/tasks",     icon: FiCheckSquare,  label: "04" },
+  { name: "Dashboard", href: "/dashboard", icon: FiHome, label: "01" },
+  { name: "Subjects", href: "/subjects", icon: FiBook, label: "02" },
+  { name: "Exams", href: "/exams", icon: FiCalendar, label: "03" },
+  { name: "Tasks", href: "/tasks", icon: FiCheckSquare, label: "04" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+    } catch {
+    } finally {
+      router.push("/signin");
+    }
+  };
 
   return (
     <aside className={styles.sidebar}>
@@ -59,8 +70,9 @@ export default function Sidebar() {
       {/* Bottom */}
       <div className={styles.bottom}>
         <Link
-          href="/settings"
-          className={`${styles.bottomLink} ${styles.settingsLink}`}
+          href="/setting"
+          className={`${styles.bottomLink} ${styles.settingsLink} ${pathname === "/setting" ? styles.bottomLinkActive : ""
+            }`}
         >
           <FiSettings className={styles.bottomIcon} />
           <span className={styles.bottomText}>Settings</span>
@@ -68,7 +80,7 @@ export default function Sidebar() {
 
         <button
           className={`${styles.bottomLink} ${styles.logoutLink}`}
-          onClick={() => { window.location.href = "/signin"; }}
+          onClick={handleLogout}
         >
           <FiLogOut className={styles.bottomIcon} />
           <span className={styles.bottomText}>Logout</span>
